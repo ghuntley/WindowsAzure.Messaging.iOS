@@ -23,6 +23,8 @@
     <ConsolePause>False</ConsolePause>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>True</MtouchDebug>
+    <MtouchI18n />
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -43,8 +45,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <MtouchDebug>True</MtouchDebug>
-    <CodesignKey>iPhone Developer: Roy Cornelissen (LZGLLN5KAN)</CodesignKey>
-    <CodesignProvision>803C030B-47B7-499B-B2FD-83361874929E</CodesignProvision>
+    <CodesignKey>iPhone Developer</CodesignKey>
     <IpaPackageName />
     <CrashReportingApiKey />
     <MtouchI18n />

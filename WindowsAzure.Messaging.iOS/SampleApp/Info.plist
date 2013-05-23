@@ -8,11 +8,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CFBundleIdentifier</key>
-	<string>com.infosupport.app2000</string>
 	<key>CFBundleDisplayName</key>
-	<string>App2000</string>
+	<string>App2000 Xamarin</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>MinimumOSVersion</key>
+	<string>5.0</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourappid</string>
 </dict>
 </plist>

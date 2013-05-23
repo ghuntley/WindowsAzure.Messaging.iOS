@@ -8,11 +8,11 @@ using MonoTouch.UIKit;
 namespace WindowsAzure.Messaging
 {
 	delegate void ReturnToken(string token);
-	delegate void GenerateTokenCallback (SBNotificationHubRequestInfo info, ReturnToken generateTokenCallBack);
 	delegate void ErrorCallback(NSError error);
 	delegate void RegistrationCallback(SBRegistration registration, NSError error);
 	delegate void RegistrationsCallback(NSArray registrations, NSError error);
 	delegate void BooleanResultCallback(bool result, NSError error);
+	delegate void TemplateRegistrationCallback(SBTemplateRegistration registration, NSError error);
 
 	[BaseType (typeof(NSObject))]
 	interface SBConnectionString {
@@ -32,42 +32,43 @@ namespace WindowsAzure.Messaging
 	[BaseType (typeof(NSObject))]
 	interface SBNotificationHub
 	{
+		/// <summary>
+		/// Returns the API version of this library.
+		/// </summary>
 		[Static, Export("version")]
 		string Version ();
-	
+
 		[Export("initWithConnectionString:notificationHubPath:")]
 		IntPtr Constructor(string connectionString, string notificationHubPath);
 
-		[Export("initWithEndpoint:notificationHubPath:generateTokenCallback:")]
-		IntPtr Constructor(NSUrl endPoint, string notificationHubPath, GenerateTokenCallback generateTokenCallback);
-		//SBNotificationHub InitWithEndpointAsync(NSUrl endpoint, string notificationHubPath, GenerateTokenCallback callback);
-	
-		[Export("refreshRegistrationsWithDeviceToken:completion:")]
-		void RefreshRegistrationsWithDeviceTokenAsync(NSData deviceToken, ErrorCallback callback);
-
-		[Export("createDefaultRegistrationWithTags:completion:")]
-		void CreateDefaultRegistrationAsync(NSSet tags, ErrorCallback callback);
-	
-		[Export("createDefaultRegistrationWithTags:tags:completion:")]
-		void CreateDefaultRegistrationAsync(string name, NSSet tags, ErrorCallback callback);
-
 		[Export("createTemplateRegistrationWithName:jsonBodyTemplate:expiryTemplate:tags:completion:")]
-		void CreateTemplateRegistrationAsync(string name, string jsonBodyTemplate, [NullAllowed] string expiryTemplate, [NullAllowed] NSSet tags, ErrorCallback callback);
+		void CreateTemplateRegistrationAsync(string templateName, string jsonBodyTemplate, string expiryTemplate, [NullAllowed] NSSet tags, ErrorCallback callback);
 
-		[Export("retrieveDefaultRegistrationWithCompletion")]
-		void RetrieveDefaultRegistrationAsync(RegistrationCallback callback);
-			
-		[Export("retrieveRegistrationWithName:completion:")]
-		void RetrieveRegistrationAsync(string names, RegistrationCallback callback);
-			
+		[Export("refreshRegistrationsWithDeviceToken:completion:")]
+		void RefreshRegistrationsAsync(NSData deviceToken, ErrorCallback completion);
+
+		/// <summary>
+		/// Creates a native registration with tags.
+		/// </summary>
+		/// <param name="tags">Tags.</param>
+		/// <param name="callback">Callback.</param>
+		[Export("createNativeRegistrationWithTags:completion:")]
+		void CreateNativeRegistrationAsync([NullAllowed] NSSet tags, ErrorCallback callback);
+
+		[Export("retrieveNativeRegistrationWithCompletion")]
+		void RetrieveNativeRegistrationAsync(RegistrationCallback callback);
+
+		[Export("retrieveTemplateRegistrationWithName:completion:")]
+		void RetrieveTemplateRegistrationAsync(string templateName, TemplateRegistrationCallback callback);
+
 		[Export("retrieveAllRegistrationsWithCompletion")]
 		void RetrieveAllRegistrationsAsync(RegistrationsCallback callback);
 
-		[Export("deleteDefaultRegistrationWithCompletion")]
-		void DeleteDefaultRegistrationAsync(ErrorCallback callback);
+		[Export("deleteNativeRegistrationWithCompletion")]
+		void DeleteNativeRegistrationAsync(ErrorCallback callback);
 
-		[Export("deleteRegistrationWithName:completion:")]
-		void DeleteRegistrationAsync(string name, ErrorCallback callback);
+		[Export("deleteTemplateRegistrationWithName:completion:")]
+		void DeleteTemplateRegistrationAsync(string templateName, ErrorCallback callback);
 
 		[Export("deleteAllRegistrationsWithCompletion")]
 		void DeleteAllRegistrationsAsync(ErrorCallback callback);
@@ -75,97 +76,75 @@ namespace WindowsAzure.Messaging
 		[Export("updateRegistrationWithRegistration:completion:")]
 		void UpdateRegistrationAsync(SBRegistration registration, ErrorCallback callback);
 
-		[Export("defaultRegistrationExistsWithCompletion:")]
-		void DefaultRegistrationExistsAsync(BooleanResultCallback callback);
+		[Export("nativeRegistrationExistsWithCompletion")]
+		void NativeRegistrationExistsAsync(BooleanResultCallback callback);
 
-		[Export("registrationExistsWithName:completion:")]
-		void RegistrationExistsAsync(string name, BooleanResultCallback callback);
+		[Export("templateRegistrationExistsWithName:completion:")]
+		void TemplateRegistrationExistsAsync(string templateName, BooleanResultCallback callback);
+
+		// sync operations
 
 		[Export("refreshRegistrationsWithDeviceToken:error:")]
-		bool RefreshRegistration(NSData deviceToken, out NSError error);
+		bool RefreshRegistrations(NSData deviceToken, out NSError error);
 
-		[Export("createDefaultRegistrationWithTags:error:")]
-		bool CreateDefaultRegistration(NSSet tags, out NSError error);
-
-		[Export("createRegistrationWithName:tags:error:")]
-		bool CreateRegistration(string name, NSSet tags, out NSError error);
+		[Export("createNativeRegistrationWithTags:error:")]
+		bool CreateNativeRegistration([NullAllowed] NSSet tags, out NSError error);
 
 		[Export("createTemplateRegistrationWithName:jsonBodyTemplate:expiryTemplate:tags:error:")]
-		bool CreateTemplateRegistration(string name, string jsonBodyTemplate, [NullAllowed] string expiryTemplate, [NullAllowed] NSSet tags, out NSError error);
+		bool CreateTemplateRegistration(string templateName, string jsonBodyTemplate, string expiryTemplate, [NullAllowed] NSSet tags, out NSError error);
 
-		[Export("retrieveDefaultRegistrationWithError:")]
-		SBRegistration RetrieveDefaultRegistration(out NSError error);
+		[Export("retrieveNativeRegistrationWithError")]
+		SBRegistration RetrieveNativeRegistration(out NSError error);
 
-		[Export("retrieveRegistrationWithName:error:")]
-		SBRegistration RetrieveRegistration(string name, out NSError error);
+		[Export("retrieveTemplateRegistrationWithName:error:")]
+		SBTemplateRegistration RetrieveTemplateRegistration(string templateName, out NSError error);
 
-		[Export("retrieveAllRegistrationsWithError:")]
+		[Export("retrieveAllRegistrationsWithError")]
 		NSArray RetrieveAllRegistrations(out NSError error);
 
-		[Export("deleteDefaultRegistrationWithError")]
-		bool DeleteDefaultRegistration(out NSError error);
+		[Export("deleteNativeRegistrationWithError")]
+		bool DeleteNativeRegistration(out NSError error);
 
-		[Export("deleteRegistrationWithName:error:")]
-		bool DeleteRegistration(string name, out NSError error);
+		[Export("deleteTemplateRegistrationWithName:error:")]
+		bool DeleteTemplateRegistration(string templateName, out NSError error);
 
-		[Export("deleteAllRegistrationsWithError:")]
+		[Export("deleteAllRegistrationsWithError")]
 		bool DeleteAllRegistrations(out NSError error);
 
 		[Export("updateRegistrationWithRegistration:error:")]
-		bool UpdateRegistration(SBRegistration registration, out NSError error);
-	
-		[Export("defaultRegistrationExistsWithError:")]
-		bool DefaultRegistrationExists(out NSError error);
-	
-		[Export("registrationExistsWithName:error:")]
-		bool RegistrationExists(string name, out NSError error);
+		bool UpdateRegistration(SBRegistration registration, out NSError errror);
+
+		[Export("nativeRegistrationExistsWithError")]
+		bool NativeRegistrationExists(out NSError error);
+
+		[Export("templateRegistrationExistsWithName:error:")]
+		bool TemplateRegistrationExists(string templateName, out NSError error);
+
 	}	
-
-	[BaseType(typeof(NSObject))]
-	interface SBNotificationHubRequestInfo
-	{
-		[Export("requestUri")]
-		string RequestUri { get; set; }
-
-		[Export("tags")]
-		NSArray Tags { get; set; }
-
-		[Export("operationType")]
-		string OperationType { get; set; }
-
-		[Export("notificationHubPath")]
-		string NotificationHubPath { get; set; }
-
-		[Export("initWithRequest")]
-		SBNotificationHubRequestInfo Init(NSUrlRequest request);
-
-		[Export("jsonString")]
-		string JsonString();
-	}
-
+	
 	[BaseType(typeof(NSObject))]
 	interface SBRegistration
 	{
+		[Export("ETag")]
+		string ETag { get; set; }
+
 		[Export("expiresAt")]
 		NSDate ExpiresAt { get; set; }
 
 		[Export("tags")]
 		NSSet Tags { get; set; }
 
+		[Export("registrationId")]
+		string RegistrationId { get; set; }
+
 		[Export("deviceToken")]
 		string DeviceToken { get; set; }
 
-		[Export("name")]
-		string Name { get; set; }
+		[Static, Export("Name")]
+		string Name();
 
-		[Static, Export("DefaultName")]
-		string DefaultName();
-
-		[Static, Export("NativeXmlPayloadWithName:deviceToken:")]
-		string NativeXmlPayload(string name, string deviceToken);
-
-		[Static, Export("TemplateXmlPayloadWithName:deviceToken:bodyTemplate:expiryTemplate:")]
-		string TemplateXmlPayload(string name, string deviceToken, string bodyTemplate, string expiryTemplate);
+		[Static, Export("PayloadWithDeviceToken:tags:")]
+		string Payload(string deviceToken, NSSet tags);
 	}
 
 	[BaseType(typeof(SBRegistration))]
