@@ -55,28 +55,28 @@ namespace WindowsAzure.Messaging
 		[Export("createNativeRegistrationWithTags:completion:")]
 		void CreateNativeRegistrationAsync([NullAllowed] NSSet tags, ErrorCallback callback);
 
-		[Export("retrieveNativeRegistrationWithCompletion")]
+		[Export("retrieveNativeRegistrationWithCompletion:")]
 		void RetrieveNativeRegistrationAsync(RegistrationCallback callback);
 
 		[Export("retrieveTemplateRegistrationWithName:completion:")]
 		void RetrieveTemplateRegistrationAsync(string templateName, TemplateRegistrationCallback callback);
 
-		[Export("retrieveAllRegistrationsWithCompletion")]
+		[Export("retrieveAllRegistrationsWithCompletion:")]
 		void RetrieveAllRegistrationsAsync(RegistrationsCallback callback);
 
-		[Export("deleteNativeRegistrationWithCompletion")]
+		[Export("deleteNativeRegistrationWithCompletion:")]
 		void DeleteNativeRegistrationAsync(ErrorCallback callback);
 
 		[Export("deleteTemplateRegistrationWithName:completion:")]
 		void DeleteTemplateRegistrationAsync(string templateName, ErrorCallback callback);
 
-		[Export("deleteAllRegistrationsWithCompletion")]
+		[Export("deleteAllRegistrationsWithCompletion:")]
 		void DeleteAllRegistrationsAsync(ErrorCallback callback);
 
 		[Export("updateRegistrationWithRegistration:completion:")]
 		void UpdateRegistrationAsync(SBRegistration registration, ErrorCallback callback);
 
-		[Export("nativeRegistrationExistsWithCompletion")]
+		[Export("nativeRegistrationExistsWithCompletion:")]
 		void NativeRegistrationExistsAsync(BooleanResultCallback callback);
 
 		[Export("templateRegistrationExistsWithName:completion:")]
@@ -93,28 +93,28 @@ namespace WindowsAzure.Messaging
 		[Export("createTemplateRegistrationWithName:jsonBodyTemplate:expiryTemplate:tags:error:")]
 		bool CreateTemplateRegistration(string templateName, string jsonBodyTemplate, string expiryTemplate, [NullAllowed] NSSet tags, out NSError error);
 
-		[Export("retrieveNativeRegistrationWithError")]
+		[Export("retrieveNativeRegistrationWithError:")]
 		SBRegistration RetrieveNativeRegistration(out NSError error);
 
 		[Export("retrieveTemplateRegistrationWithName:error:")]
 		SBTemplateRegistration RetrieveTemplateRegistration(string templateName, out NSError error);
 
-		[Export("retrieveAllRegistrationsWithError")]
+		[Export("retrieveAllRegistrationsWithError:")]
 		NSArray RetrieveAllRegistrations(out NSError error);
 
-		[Export("deleteNativeRegistrationWithError")]
+		[Export("deleteNativeRegistrationWithError:")]
 		bool DeleteNativeRegistration(out NSError error);
 
 		[Export("deleteTemplateRegistrationWithName:error:")]
 		bool DeleteTemplateRegistration(string templateName, out NSError error);
 
-		[Export("deleteAllRegistrationsWithError")]
+		[Export("deleteAllRegistrationsWithError:")]
 		bool DeleteAllRegistrations(out NSError error);
 
 		[Export("updateRegistrationWithRegistration:error:")]
 		bool UpdateRegistration(SBRegistration registration, out NSError errror);
 
-		[Export("nativeRegistrationExistsWithError")]
+		[Export("nativeRegistrationExistsWithError:")]
 		bool NativeRegistrationExists(out NSError error);
 
 		[Export("templateRegistrationExistsWithName:error:")]
@@ -144,7 +144,7 @@ namespace WindowsAzure.Messaging
 		string Name();
 
 		[Static, Export("PayloadWithDeviceToken:tags:")]
-		string Payload(string deviceToken, NSSet tags);
+		string Payload(string deviceToken, [NullAllowed] NSSet tags);
 	}
 
 	[BaseType(typeof(SBRegistration))]
