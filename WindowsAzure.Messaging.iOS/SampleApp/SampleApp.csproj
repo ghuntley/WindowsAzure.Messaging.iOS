@@ -86,9 +86,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
-    <Reference Include="WindowsAzure.Messaging">
-      <HintPath>..\WindowsAzure.Messaging\bin\Debug\WindowsAzure.Messaging.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -108,4 +105,10 @@
     <InterfaceDefinition Include="SampleAppViewController.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsAzure.Messaging\WindowsAzure.Messaging.csproj">
+      <Project>{6DE08A20-B115-413D-A5C4-A4CE026707EF}</Project>
+      <Name>WindowsAzure.Messaging</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

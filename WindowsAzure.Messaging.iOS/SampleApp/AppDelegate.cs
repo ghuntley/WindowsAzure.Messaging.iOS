@@ -15,9 +15,9 @@ namespace SampleApp
 	[Register ("AppDelegate")]
 	public partial class AppDelegate : UIApplicationDelegate
 	{
-		private string hubName = "[your hub name]";
-		private string hubNamespace = "[your servicebus namespace]";
-		private string key = "[your shared listen secret]";
+		private string hubName = "[your hub name here]";
+		private string hubNamespace = "[your namespace here]";
+		private string key = "[your shared listen access key here]";
 
 		// TODO: make sure to set the app identifier in the Project Settings > iOS Application!
 
@@ -51,40 +51,23 @@ namespace SampleApp
 
 		public override void RegisteredForRemoteNotifications (UIApplication application, NSData deviceToken)
 		{
-			//The deviceToken is of interest here, this is what your push notification server needs to send out a notification
-			// to the device.  So, most times you'd want to send the device Token to your servers when it has changed
-
-			//There's probably a better way to do this
-			NSString strFormat = new NSString("%@");
-			NSString newDeviceToken = new NSString(MonoTouch.ObjCRuntime.Messaging.IntPtr_objc_msgSend_IntPtr_IntPtr(new MonoTouch.ObjCRuntime.Class("NSString").Handle, new MonoTouch.ObjCRuntime.Selector("stringWithFormat:").Handle, strFormat.Handle, deviceToken.Handle));
-			
-			//We only want to send the device token to the server if it hasn't changed since last time
-			// no need to incur extra bandwidth by sending the device token every time
 			var connectionString = SBConnectionString.CreateUsingSharedAccessSecretWithListenAccess(
 				new NSUrl(@"sb://" + hubNamespace + ".servicebus.windows.net"), key);
 
 			this._hub = new SBNotificationHub(connectionString, hubName);
 
-			_hub.RefreshRegistrationsAsync(deviceToken, (error) => {
-				if (error == null)
-				{
-					_hub.TemplateRegistrationExistsAsync("App2000iOSRegistration", (exists, error2) => {
-						if (error2 == null)	{
-							if (!exists){
-								NSSet tags = null; //new NSSet();
-								_hub.CreateTemplateRegistrationAsync("App2000iOSRegistration", @"{""aps"": {""alert"": ""$(msg)""}}", @"$(expiryProperty)", tags, (error3) => {
-									if (error3 != null) {
-										Console.WriteLine("Error creating template registration: {0}", error3);
-									}
-								});
-							}
-						} else { Console.WriteLine("Error checking existence of template registration: {0}", error2); }
+			_hub.UnregisterAllAsync (deviceToken, (error) => {
+				if (error != null) {
+					Console.WriteLine("Error calling Unregister: {0}", error.ToString());
+				} else {
+					NSSet tags = null; // create tags if you want
+					_hub.RegisterTemplateAsync(deviceToken, "App2000iOSRegistration", @"{""aps"": {""alert"": ""$(msg)""}}", @"$(expiryProperty)", tags, (registrationError) => {
+						if (registrationError != null) {
+							Console.WriteLine("Error calling RegisterTemplate: {0}", registrationError.ToString());
+						}
 					});
-				} else { Console.WriteLine("Error refreshing registrations: {0}", error); }
+				}
 			});
-
-			//Save the new device token for next application launch
-			NSUserDefaults.StandardUserDefaults.SetString(newDeviceToken, "deviceToken");
 		}
 
 		public override void FailedToRegisterForRemoteNotifications (UIApplication application, NSError error)
